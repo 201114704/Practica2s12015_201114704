@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1427432803 source:/home/cristopher/Proyectos/Practica2_EDD_2015/main.c
+1428380725 source:/home/cristopher/Proyectos/Practica2_EDD_2015/main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

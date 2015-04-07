@@ -5,32 +5,29 @@
 #include <unistd.h>
 
 int h = 0; // indica la altura que se encuentra cada nodo
-int Tamano_ListaBurbuja = 0; // tamaño de las listas tanto de burbuja como quicksort
+int Tamano_ListaBurbuja = 0; // tamaño de las listas tanto de burbuja como quicksort = cantidad de datos totales
 double TiempoInsertado=0.0;
 double TiempoTranscurridoRecorridoArbol=0.0;
 double TiempoTrasncurridoOrdenamientoBurbuja=0.0;
+double TiempoTranscurridoOrdenamientoBurbujaOptimizado=0.0;
 double TiempoTranscurridoOrdenamientoQuicksort=0.0;
 
 typedef struct Nume{ // estructra de nodo Numero pero para listasimple para metodo burbuja
     int Num;
     struct Nume *Siguiente;
 }Nume;
-
 typedef struct ListaBurbuja{ //lista para insertar datos del archivo (uso en metodo burbuja)
     struct Nume *Primero;
 }ListaBurbuja;
-
 typedef struct Numer{ // estructra de nodo Numero pero para listasimple para metodo burbuja
     int Num;
     struct Numer *Siguiente;
     struct Numer *Anterior;
 }Numer;
-
-typedef struct ListaQuicksort{
+typedef struct ListaQuicksort{ // lista para insertar datos del archivo (uso en metodo quicksort)
     struct Numer *Primero;
     struct Numer *Ultimo;
 }ListaQuicksort;
-
 void InsertarLisaBurbuja(ListaBurbuja *Lista, int num){ // insertar en la lista los datos del archivo Lista simple
     Nume *Nuevo;
     Nuevo = malloc(sizeof(Nume));
@@ -50,7 +47,6 @@ void InsertarLisaBurbuja(ListaBurbuja *Lista, int num){ // insertar en la lista 
         NodoAux = Nuevo;
     }
 }
-
 void MostrarListaBur(ListaBurbuja *Lista){ // Muestra la lista donde se inserto y se ordeno en base a burbuja
     Nume *Nodoaux = Lista->Primero;
     while(Nodoaux!=NULL){
@@ -58,7 +54,6 @@ void MostrarListaBur(ListaBurbuja *Lista){ // Muestra la lista donde se inserto 
         Nodoaux = Nodoaux->Siguiente;
     }
 }
-
 Nume *BuscarNodoBurbuja(ListaBurbuja *Lista,int num){ // busca el nodo suponiendo indices y lo devuelve (funciona como array[indece]
     int ind = 0;
     Nume *Nodoaux = Lista->Primero;
@@ -74,7 +69,25 @@ Nume *BuscarNodoBurbuja(ListaBurbuja *Lista,int num){ // busca el nodo suponiend
     }
     return NodoRetornado;
 }
+void Ordenamiento_BurbujaOptimizado(ListaBurbuja *ListaBur){ // Ordena todos los datos en sus lista
+    int i, j;
+    int temp;
+    Nume *Nodoauxj;
 
+     for (i=1; i<Tamano_ListaBurbuja; i++){
+            Nodoauxj = ListaBur->Primero;
+          for (j=0; j<Tamano_ListaBurbuja - i; j++){
+               if (Nodoauxj->Num > Nodoauxj->Siguiente->Num)
+                    {
+                    /* Intercambiamos */
+                    temp = Nodoauxj->Num;
+                    Nodoauxj->Num = Nodoauxj->Siguiente->Num;
+                    Nodoauxj->Siguiente->Num = temp;
+                    }
+                Nodoauxj = Nodoauxj->Siguiente;
+            }
+        }
+}
 void Ordenamiento_Burbuja(ListaBurbuja *ListaBur){ // Ordena todos los datos en sus lista
     int i, j;
     int temp;
@@ -93,7 +106,6 @@ void Ordenamiento_Burbuja(ListaBurbuja *ListaBur){ // Ordena todos los datos en 
             }
         }
 }
-
 void InsertarListaQuick(ListaQuicksort *Lista, int num){ // inserta en la lista los datos del archivo Lista doble
     Numer *Nuevo;
     Nuevo = malloc(sizeof(Nume));
@@ -116,7 +128,6 @@ void InsertarListaQuick(ListaQuicksort *Lista, int num){ // inserta en la lista 
         Lista->Ultimo = Nuevo;
     }
 }
-
 void MostrarListaQuick(ListaQuicksort *Lista){ // Muestra la lista donde se inserto y se ordeno en base a Quicksort
     Numer *Nodoaux = Lista->Primero;
     while(Nodoaux!=NULL){
@@ -124,7 +135,6 @@ void MostrarListaQuick(ListaQuicksort *Lista){ // Muestra la lista donde se inse
         Nodoaux = Nodoaux->Siguiente;
     }
 }
-
 Numer *BuscarNodoQuick(ListaQuicksort *Lista,int num){ // busca el nodo suponiendo indices y lo devuelve (funciona como array[indece]
     int indice = 0;
     Numer *Nodoaux = Lista->Primero;
@@ -140,7 +150,6 @@ Numer *BuscarNodoQuick(ListaQuicksort *Lista,int num){ // busca el nodo suponien
     }
     return NodoRetornado;
 }
-
 int divide(ListaQuicksort *Lista, int start, int end) { // metodo que divive en bloques la lista para poder seguir con el ordenamiento quicksort
     int left;
     int right;
@@ -179,7 +188,6 @@ int divide(ListaQuicksort *Lista, int start, int end) { // metodo que divive en 
     // La nueva posición del pivot
     return right;
 }
-
 void quicksort(ListaQuicksort *Lista, int start, int end){ // Ordena todos los datos en su lista, se amarra del metodo divide
     int pivot;
     if (start < end) {
@@ -190,22 +198,18 @@ void quicksort(ListaQuicksort *Lista, int start, int end){ // Ordena todos los d
         quicksort(Lista, pivot + 1, end);
     }
 }
-
 typedef struct Numero{ // estructura de nodo Numero
     int num;
     int Factor_Equilibrio;
     struct Numero *Izquierdo;
     struct Numero *Derecho;
 }Numero;
-
 typedef struct ArbolAVl { // Estructura de arbo AVL
     struct Numero *Raiz;
 }ArbolAVl;
-
 ListaBurbuja *ListaBur; // declaracion de variable de la lista burbuja
 ListaQuicksort *ListaQuick; // declaracion de variable de la lista quicksort
 ArbolAVl *AVL; // Declaracion del arbol AVL
-
 Numero *rotacionII(Numero *Num, Numero *Num1){ //Rotacion Izquierda IZquierda
     Num->Izquierdo = Num1->Derecho;
     Num1->Derecho = Num;
@@ -219,7 +223,6 @@ Numero *rotacionII(Numero *Num, Numero *Num1){ //Rotacion Izquierda IZquierda
     }
     return Num1;
 }
-
 Numero *rotacionDD(Numero *Num, Numero *Num1){ // Rotacion Derecha derecha
     Num->Derecho = Num1->Izquierdo;
     Num1->Izquierdo = Num;
@@ -233,7 +236,6 @@ Numero *rotacionDD(Numero *Num, Numero *Num1){ // Rotacion Derecha derecha
     }
     return Num1;
 }
-
 Numero *rotacionID(Numero *Num, Numero *Num1){ //Rotacion Izquierda Derecha
     Numero *Num2;
     Num2 = Num1->Derecho;
@@ -256,7 +258,6 @@ Numero *rotacionID(Numero *Num, Numero *Num1){ //Rotacion Izquierda Derecha
     Num2->Factor_Equilibrio=0;
     return Num2;
 }
-
 Numero *rotacionDI(Numero *Num, Numero *Num1){ // Rotacion Derecha Izquierda
     Numero *Num2;
     Num2 = Num1->Izquierdo;
@@ -279,7 +280,6 @@ Numero *rotacionDI(Numero *Num, Numero *Num1){ // Rotacion Derecha Izquierda
     Num2->Factor_Equilibrio=0;
     return Num2;
 }
-
 Numero *InsertarAVL(Numero *Nodo, int num){ // Agregar al AVL con Rotaciones
     Numero *Nodoaux;
     if(Nodo==NULL){
@@ -351,7 +351,6 @@ Numero *InsertarAVL(Numero *Nodo, int num){ // Agregar al AVL con Rotaciones
     }
     return Nodo;
 }
-
 void verAvl(Numero *Nodo){ // Mostrar el AVL para verificacion de insercion
     if(Nodo==NULL){
         return;
@@ -361,7 +360,6 @@ void verAvl(Numero *Nodo){ // Mostrar el AVL para verificacion de insercion
     verAvl(Nodo->Izquierdo);
     verAvl(Nodo->Derecho);
 }
-
 void RecorridoINORDEN(Numero *Nodo){ //Recorrido del arbol AVL en orden
     if(Nodo==NULL){
         return;
@@ -371,15 +369,12 @@ void RecorridoINORDEN(Numero *Nodo){ //Recorrido del arbol AVL en orden
     printf("%d ",Numaux);
     RecorridoINORDEN(Nodo->Derecho);
 }
-
-double timeval_diff(struct timeval *a, struct timeval *b){
+double timeval_diff(struct timeval *a, struct timeval *b){ // metodo que me devuelve la diferencia de tiempos
   return
     (double)(a->tv_sec + (double)a->tv_usec/1000000) -
     (double)(b->tv_sec + (double)b->tv_usec/1000000);
 }
-
-struct timeval t_ini, t_fin;
-
+struct timeval t_ini, t_fin; // variables que me ayudan a obtener el tiempo de inicio y final de cada proceso
 void LeerArchivo(char* NombreArchivo){ // lee el archivo que contiene los datos
 
     FILE* Archivo=NULL;
@@ -388,7 +383,7 @@ void LeerArchivo(char* NombreArchivo){ // lee el archivo que contiene los datos
     Archivo = fopen(NombreArchivo,"r");
     if(Archivo==NULL) return -1;
     endFile = fscanf(Archivo," %[^\n]",&Lectura_PorLinea);
-    int n = atoi(Lectura_PorLinea);
+    int n = atoi(Lectura_PorLinea);// para de char a entero
     //obtener el tiempo de insertado
     gettimeofday(&t_ini, NULL);
     AVL->Raiz = InsertarAVL(AVL->Raiz,n); // ingresa en el arbol aVL
@@ -419,7 +414,111 @@ void LeerArchivo(char* NombreArchivo){ // lee el archivo que contiene los datos
     fclose(Archivo);
 
 }
+void Graficar_InsercionAVL(){//Grafica los datos insertados
+char a_Plotear[100];
+char pendiente_avl[15];
+char cant_datos[Tamano_ListaBurbuja];
+// Conversion a char las variables
+sprintf(pendiente_avl, "%f", TiempoInsertado);
+sprintf(cant_datos, "%i", Tamano_ListaBurbuja);
+// comando para "Plotear"
+strcpy(a_Plotear, "gnuplot -p -e \"plot [0:");
+strcat(a_Plotear, pendiente_avl);
+strcat(a_Plotear, "][0:");
+strcat(a_Plotear, cant_datos);
+strcat(a_Plotear, "] ");
+strcat(a_Plotear, cant_datos);
+strcat(a_Plotear, "*x/");
+strcat(a_Plotear, pendiente_avl);
+strcat(a_Plotear, " title 'Grafica de inserccion AVL'\"");
+system(a_Plotear);
+printf( "\nGrafica de la inserción del AVL...........................:\n");
+getchar();
+}
+void GraficaRecorridoArbol(){// grafica los datos en el recorrido del arbol
+char a_Plotear2[100];
+char pendiente_inorden[15];
+char cant_datos[Tamano_ListaBurbuja];
 
+sprintf(pendiente_inorden, "%f", TiempoTranscurridoRecorridoArbol);
+sprintf(cant_datos, "%i", Tamano_ListaBurbuja);
+
+strcpy(a_Plotear2, "gnuplot -p -e \"plot [0:");
+strcat(a_Plotear2, pendiente_inorden);
+strcat(a_Plotear2, "][0:");
+strcat(a_Plotear2, cant_datos);
+strcat(a_Plotear2, "] ");
+strcat(a_Plotear2, cant_datos);
+strcat(a_Plotear2, "*x/");
+strcat(a_Plotear2, pendiente_inorden);
+strcat(a_Plotear2, " title 'Grafica de Recorrido InOrden'\"");
+system(a_Plotear2);
+printf( "\nGrafica del Recorrido del AVL...........................:\n");
+getchar();
+}
+void Grafica_OrdenamientoBurbuja(){ // grafica los datos ordenados y con su tiempo total burbuja
+char a_Plotear3[100];
+char pendiente_bubble[15];
+char cant_datos[Tamano_ListaBurbuja];
+
+sprintf(pendiente_bubble, "%f", TiempoTrasncurridoOrdenamientoBurbuja);
+sprintf(cant_datos, "%i", Tamano_ListaBurbuja);
+
+strcpy(a_Plotear3, "gnuplot -p -e \"plot [0:");
+strcat(a_Plotear3, pendiente_bubble);
+strcat(a_Plotear3, "][0:");
+strcat(a_Plotear3, cant_datos);
+strcat(a_Plotear3, "] ");
+strcat(a_Plotear3, cant_datos);
+strcat(a_Plotear3, "*x/");
+strcat(a_Plotear3, pendiente_bubble);
+strcat(a_Plotear3, " title 'Grafica de Ordenamiento Burbuja'\"");
+system(a_Plotear3);
+printf( "\nGrafica del Ordenamiento Burbuja...........................:\n");
+getchar();
+}
+void Grafica_OrdenamientoBurbujaOptimizado(){// grafica los datos ordenado y con su tiempo total burbuja optimizado
+char a_Plotear3[100];
+char pendiente_bubble[15];
+char cant_datos[Tamano_ListaBurbuja];
+
+sprintf(pendiente_bubble, "%f", TiempoTranscurridoOrdenamientoBurbujaOptimizado);
+sprintf(cant_datos, "%i", Tamano_ListaBurbuja);
+
+strcpy(a_Plotear3, "gnuplot -p -e \"plot [0:");
+strcat(a_Plotear3, pendiente_bubble);
+strcat(a_Plotear3, "][0:");
+strcat(a_Plotear3, cant_datos);
+strcat(a_Plotear3, "] ");
+strcat(a_Plotear3, cant_datos);
+strcat(a_Plotear3, "*x/");
+strcat(a_Plotear3, pendiente_bubble);
+strcat(a_Plotear3, " title 'Grafica de Ordenamiento Burbuja Optimizado'\"");
+system(a_Plotear3);
+printf( "\nGrafica del Ordenamiento Burbuja Optimizado...........................:\n");
+getchar();
+}
+void Grafica_OrdenamientoQuicksort(){ // grafica los datos ordenados y con su tiempo total quicksort
+char a_Plotear4[100];
+char pendiente_Quicksort[15];
+char cant_datos[Tamano_ListaBurbuja];
+
+sprintf(pendiente_Quicksort, "%f", TiempoTranscurridoOrdenamientoQuicksort);
+sprintf(cant_datos, "%i", Tamano_ListaBurbuja);
+
+strcpy(a_Plotear4, "gnuplot -p -e \"plot [0:");
+strcat(a_Plotear4, pendiente_Quicksort);
+strcat(a_Plotear4, "][0:");
+strcat(a_Plotear4, cant_datos);
+strcat(a_Plotear4, "] ");
+strcat(a_Plotear4, cant_datos);
+strcat(a_Plotear4, "*x/");
+strcat(a_Plotear4, pendiente_Quicksort);
+strcat(a_Plotear4, " title 'Grafica de Ordenamiento Quicksort'\"");
+system(a_Plotear4);
+printf( "\nGrafica del Ordenamiento Quicksort...........................:\n");
+getchar();
+}
 void Menu(){ // muestra el menu de la aplicacio y sus respectivas opciones
     int salir=0;
     int opcion=0;
@@ -430,9 +529,15 @@ void Menu(){ // muestra el menu de la aplicacio y sus respectivas opciones
         printf("1. Ingresar Datos\n");
         printf("2. Recorrido del Arbol (InOrden)\n");
         printf("3. Ordenamiento por metodo burbuja\n");
-        printf("4. Ordenamiento por metodo Quicksort\n");
-        printf("5. Tiempos\n");
-        printf("6. Salir\n");
+        printf("4. Ordenamiento por metodo burbuja Optimizado\n");
+        printf("5. Ordenamiento por metodo Quicksort\n");
+        printf("6. Tiempos\n");
+        printf("7. Grafica, Insercion AVL\n");
+        printf("8. Grafica, Recorrido del Arbol\n");
+        printf("9. Grafica, Ordenamiento Burbuja Optimizado\n");
+        printf("10. Grafica, Ordenamiento Burbuja\n");
+        printf("11. Grafica, Ordenamiento Quicksort\n");
+        printf("12. Salir\n");
         printf("\n----------------------------------------------------------------\n");
         printf("Opcion: ");
         scanf("%d",&opcion);
@@ -461,6 +566,15 @@ void Menu(){ // muestra el menu de la aplicacio y sus respectivas opciones
                 printf("\nTiempo de ejecución: %lf segundos\n", TiempoTrasncurridoOrdenamientoBurbuja);
                 break;
             case 4:
+                printf ("\nOrdenamiento de datos con metodo burbuja Optimizado: \n");
+                gettimeofday(&t_ini, NULL);
+                Ordenamiento_BurbujaOptimizado(ListaBur);
+                MostrarListaBur(ListaBur);
+                gettimeofday(&t_fin, NULL);
+                TiempoTranscurridoOrdenamientoBurbujaOptimizado = timeval_diff(&t_fin, &t_ini);
+                printf("\nTiempo de ejecución: %lf segundos\n", TiempoTranscurridoOrdenamientoBurbujaOptimizado);
+                break;
+            case 5:
                 printf("\nOrdenamiento de datos con metodo Quicksort:\n");
                 gettimeofday(&t_ini, NULL);
                 quicksort(ListaQuick,0,Tamano_ListaBurbuja-1);
@@ -469,21 +583,36 @@ void Menu(){ // muestra el menu de la aplicacio y sus respectivas opciones
                 TiempoTranscurridoOrdenamientoQuicksort= timeval_diff(&t_fin, &t_ini);
                 printf("\nTiempo de ejecución: %lf segundos\n", TiempoTranscurridoOrdenamientoQuicksort);
                 break;
-            case 5:
+            case 6:
                 printf("\nTiempos----------------------------:\n");
                 printf("Tiempo de insertado en el Arbol AVL: %lf s\n",TiempoInsertado);
                 printf("Recorrido de Arbol: %lf s\n",TiempoTranscurridoRecorridoArbol);
                 printf("Ordenamiento Burbuja: %lf s\n",TiempoTrasncurridoOrdenamientoBurbuja);
+                printf("Ordenamiento Burbuja Optimizado: %lf s\n",TiempoTranscurridoOrdenamientoBurbujaOptimizado);
                 printf("Ordenamiento QuickSort: %lf s\n",TiempoTranscurridoOrdenamientoQuicksort);
                 break;
-            case 6:
-                salir = 6;
+            case 7:
+                Graficar_InsercionAVL();
+                break;
+            case 8:
+                GraficaRecorridoArbol();
+                break;
+            case 9:
+                Grafica_OrdenamientoBurbujaOptimizado();
+                break;
+            case 10:
+                Grafica_OrdenamientoBurbuja();
+                break;
+            case 11:
+                Grafica_OrdenamientoQuicksort();
+                break;
+            case 12:
+                salir = 12;
                 break;
         }
     }
 
 }
-
 int main(){
     AVL =malloc(sizeof(ArbolAVl));
     ListaBur = malloc(sizeof(ListaBurbuja));
